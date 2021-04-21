@@ -1,0 +1,11 @@
+## Interface: 30300
+## Title: LootWhatIWant
+## Notes: Dardack's Loot mod
+## Author: Dardack
+## SavedVariables: LootWhatIWant_GlobalBlackList
+## SavedVariablesPerCharacter: LootWhatIWant
+
+LootWhatIWant.lua
+
+LootWhatIWant_GUI.lua
+LootWhatIWant_GUI.xml

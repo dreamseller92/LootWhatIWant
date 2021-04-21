@@ -1,0 +1,830 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="LootWhatIWant_GUI.lua"/>
+	<Button name = "LWIW_ButtonEntryTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="250" y="16" />
+		</Size>
+		<NormalFont style="GameFontHighlightLeft"/>
+	</Button>
+	<Frame name="LWIW_OptionsFrame">
+		<Layers>
+			<Layer level="ARTWORK">
+			     
+			
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="LWIW_OptionsFrame_PlaceHolder">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+				<Frames>
+					<CheckButton name="LWIW_EnableDisableOption" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TopLeft" relativeTo="$parent">
+								<Offset>
+									<AbsDimension x="3" y="-55"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								LWIW_EnableDisableOption:SetChecked(LootWhatIWant.enabled)
+							</OnLoad>
+							<OnClick>
+								 LWIW_ToggleEnable("")
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="LWIW_DeleteOption" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TopLeft" relativeTo="LWIW_EnableDisableOption">
+								<Offset>
+									<AbsDimension x="0" y="-45"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								LWIW_DeleteOption:SetChecked(LootWhatIWant.deleteItems)
+								
+							</OnLoad>
+							<OnClick>
+								 LWIW_ToggleDeletes("")
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="LWIW_CloseLootWindowOption" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="Right" relativeTo="LWIW_DeleteOption">
+								<Offset>
+									<AbsDimension x="0" y="-45"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								LWIW_CloseLootWindowOption:SetChecked(LootWhatIWant.closeLootWindow)
+							</OnLoad>
+							<OnClick>
+								LWIW_ToggleCloseWindow("")
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+					<Button name="LWIW_ThresholdDown_Menu" inherits="UIDropDownMenuTemplate">
+						<Anchors>
+							
+							<Anchor point = "RIGHT" relativeTo="$parent">
+								<Offset>
+									<AbsDimension x="-120" y="30"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								 UIDropDownMenu_Initialize(this, LWIW_ThresholdDownMenu_OnLoad);
+							</OnLoad>
+							<OnShow>
+								UIDropDownMenu_SetSelectedID(LWIW_ThresholdDown_Menu, (LootWhatIWant.lootRarity - 1))
+								UIDropDownMenu_SetSelectedName(LWIW_ThresholdDown_Menu, LWIW_Options_ThresholdlDropDown_Menu_List[(LootWhatIWant.lootRarity - 1)].name)
+							</OnShow>
+							<OnClick>
+							
+							</OnClick>
+							
+						</Scripts>
+					</Button>
+					<Button name="LWIW_CleanupButton" inherits="OptionsButtonTemplate" text="Очистить">
+						<Anchors>
+							<Anchor point="Bottom" relativeTo="$parent">
+								<Offset>
+									<AbsDimension x="0" y="60"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this.ToolTipText = "Удалить предметы из вашего черного списка";
+							</OnLoad>
+							<OnClick>
+								StaticPopup_Show ("LWIW_DeleteBagItems")
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ChangeGrayValueButton" inherits="OptionsButtonTemplate" text="Изменить">
+						<Anchors>
+							<Anchor point="Right" relativeTo="LWIW_DeleteGrays">
+								<Offset>
+									<AbsDimension x="105" y="-10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+							</OnLoad>
+							<OnClick>
+								StaticPopup_Show ("LWIW_ChangeGrayValue")
+							</OnClick>
+						</Scripts>
+					</Button>
+					
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="LWIW_Enable_Disable" inherits="GameFontNormal" text="Включить или отключить LootWhatIWant (установлен флажок включен) ." justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="30" y="-45"/>
+									</Offset>
+								</Anchor>
+								<Anchor point = "BOTTOMRIGHT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="-10" y="340"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							
+						</FontString>
+						<FontString name="LWIW_blacklisttoggle" inherits="GameFontNormal" text="Подбор и последующее удаление элементов из вашего черного списка. " justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="LWIW_Enable_Disable">
+									<Offset>
+										<AbsDimension x="0" y="250"/>
+									</Offset>
+								</Anchor>
+								<Anchor point = "BOTTOMRIGHT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="-10" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="LWIW_ToggleCloseLootWindow" inherits="GameFontNormal" justifyH="LEFT" text="Переключает автоматическое закрытие окна добычи на основе списка справа (т.е. если добыча ниже порогового значения списка, окно закроется, если оно больше, оно останется открытым): ">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="LWIW_blacklisttoggle">
+									<Offset>
+										<AbsDimension x="20" y="-90"/>
+									</Offset>
+								</Anchor>
+								<Anchor point = "BOTTOMRIGHT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="-50" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="LWIW_DeleteGrays" inherits="GameFontNormal" justifyH="LEFT" text="Переключает обработку хлама в зависимости от значения. -1: удалить хлам. 0: не удалять охлам. [значение]: все серые стопки с суммой продажи ниже [значение] будут удалены. ">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="10" y="-30"/>
+									</Offset>
+								</Anchor>
+								<Anchor point = "BOTTOMRIGHT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="-140" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="LWIW_DeleteGrays4" inherits="GameFontHighlight" justifyH = "Left" text="">
+							<Anchors>
+								<Anchor point="TopRight" relativeTo="LWIW_DeleteGrays">
+									<Offset>
+										<AbsDimension x="100" y="0"/>
+									</Offset>
+								</Anchor>
+								<Anchor point = "BOTTOMRIGHT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="-5" y="20"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name = "LWIW_OptionsPanelString" inherits="GameFontNormalLarge" text="LWIW панель настроек">
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="0" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+					
+				</Layers>
+				
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnHide>
+				
+			</OnHide>
+			<OnLoad>
+				
+				LWIW_GUI_OnLoad(self);
+			</OnLoad>
+			<OnShow>
+				
+				UIDropDownMenu_SetSelectedID(LWIW_ThresholdDown_Menu, (LootWhatIWant.lootRarity - 1))
+				UIDropDownMenu_SetSelectedName(LWIW_ThresholdDown_Menu, LWIW_Options_ThresholdlDropDown_Menu_List[(LootWhatIWant.lootRarity - 1)].name)
+			</OnShow>
+		</Scripts>
+		
+	</Frame>
+	<Frame name="LWIW_TabContainerFrame">
+		<Layers>
+			<Layer level="ARTWORK">
+			     
+			
+			</Layer>
+		</Layers>
+		<Frames>
+			
+			<Frame name="LWIW_TabPage1" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString inherits="GameFontNormal" text="Черный список:">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="20" y="-30"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString inherits="GameFontNormalLarge" text="LWIW Черный список">
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="0" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+					
+				</Layers>
+				<Frames>
+					<ScrollFrame name="LWIW_BlackList_ScrollBar" inherits="FauxScrollFrameTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="30" y="-45"/>
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-30" y="8"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(this, offset, 16,LWIW_BlackListSB_Update);
+							</OnVerticalScroll>
+							<OnShow>
+								LWIW_BlackListSB_Update()
+							</OnShow>
+						</Scripts>
+					</ScrollFrame>
+					<Button name="LWIW_ButtonEntry_BlackList1" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_BlackList_ScrollBar" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="8" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 1
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList1:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList2" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList1" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 2
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList2:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList3" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList2" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 3
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList3:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList4" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList3" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 4
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList4:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList5" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList4" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 5
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList5:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList6" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList5" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 6
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList6:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList7" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList6" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 7
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList7:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList8" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList7" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 8
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList8:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList9" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList8" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 9
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList9:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList10" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList9" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 10
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList10:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList11" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList10" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 11
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList11:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList12" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList11" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 12
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList12:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList13" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList12" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 13
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList13:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList14" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList13" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 14
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList14:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList15" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList14" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 15
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList15:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList16" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList15" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 16
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList16:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList17" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList16" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 17
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList17:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList18" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList17" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 18
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList18:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList19" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList18" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 19
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList19:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList20" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList19" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 20
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList20:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList21" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList20" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 21
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList21:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_ButtonEntry_BlackList22" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ButtonEntry_BlackList21" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								LootWhatIWant.blacklist_GUI_linenumber = 22
+								StaticPopup_Show ("LWIW_DeleteItem", LWIW_ButtonEntry_BlackList22:GetText());
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames> 
+				
+			</Frame>   
+			
+		</Frames>
+		<Scripts>
+			<OnHide>
+				 PlaySound("UChatScrollButton");
+			</OnHide>
+			<OnLoad>
+				this.elapsed = 0;
+				LWIW_Options_OnLoad(self);
+				LWIW_BlackListSB_Update();
+				LWIW_TabPage1:Show();  -- Show page 1.
+				
+				
+			</OnLoad>
+			<OnShow>
+				LWIW_BlackListSB_Update();
+				PlaySound("UChatScrollButton");
+				LWIW_TabPage1:Show()
+			</OnShow>
+		</Scripts>
+		
+	</Frame>
+	<Frame name="LWIW_ProfilesFrame">
+		<Layers>
+			<Layer level="ARTWORK">
+			     
+			
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="LWIW_ProfileFrame_PlaceHolder">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name = "LWIW_ProfilePanelString" inherits="GameFontNormalLarge" text="LWIW настройка профилей">
+							<Anchors>
+								<Anchor point="TOP" relativeTo="$parent">
+									<Offset>
+										<AbsDimension x="0" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="LWIW_ProfileDown_Menu" inherits="UIDropDownMenuTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-30"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								 UIDropDownMenu_Initialize(this, LWIW_ProfileDownMenu_OnLoad);
+							</OnLoad>
+							<OnShow>
+								
+							</OnShow>
+							<OnClick>
+							
+							</OnClick>
+							
+						</Scripts>
+					</Button>
+					<Button name="LWIW_CopyGlobalBLtoLocal" inherits="OptionsButtonTemplate" text="Установить">
+						<Anchors>
+							<Anchor point="TopLeft" relativeTo="LWIW_ProfileDown_Menu">
+								<Offset>
+									<AbsDimension x="160" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+							</OnLoad>
+							<OnClick>
+								if (UIDropDownMenu_GetSelectedName(LWIW_ProfileDown_Menu) ~= "Profiles") then
+									print(UIDropDownMenu_GetSelectedName(LWIW_ProfileDown_Menu))
+									StaticPopup_Show ("LWIW_CopyGlobalBLtoLocal", UIDropDownMenu_GetSelectedName(LWIW_ProfileDown_Menu))
+								else
+									print("Имя игрока не выбрано. Пожалуйста, выберите персонажа, чтобы скопировать их черный список в этот черный список.")
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="LWIW_CopyLocalBLtoGlobal" inherits="OptionsButtonTemplate" text="Копировать">
+						<Anchors>
+							<Anchor point="Bottom" relativeTo="$parent">
+								<Offset>
+									<AbsDimension x="0" y="10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+							</OnLoad>
+							<OnClick>
+								
+								StaticPopup_Show ("LWIW_CopyBLToGlobal")
+								
+							</OnClick>
+						</Scripts>
+					</Button>
+					<ScrollFrame name="LWIW_ProfilesBlackList_ScrollBar" inherits="FauxScrollFrameTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="30" y="-45"/>
+								</Offset>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-30" y="8"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(this, offset, 16,LWIW_ProfileBlackListSB_Update);
+							</OnVerticalScroll>
+							<OnShow>
+								
+							</OnShow>
+						</Scripts>
+					</ScrollFrame>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList1" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesBlackList_ScrollBar" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="8" y="-8"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList2" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList1" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList3" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList2" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList4" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList3" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList5" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList4" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList6" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList5" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList7" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList6" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList8" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList7" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+					
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList9" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList8" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList10" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList9" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList11" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList10" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList12" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList11" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList13" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList12" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList14" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList13" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList15" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList14" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList16" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList15" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList17" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList16" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList18" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList17" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList19" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList18" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList20" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList19" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList21" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList20" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+					<Button name="LWIW_ProfilesButtonEntry_BlackList22" inherits="LWIW_ButtonEntryTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LWIW_ProfilesButtonEntry_BlackList21" relativePoint="BOTTOMLEFT"/>
+						</Anchors>
+						
+					</Button>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnHide>
+				
+			</OnHide>
+			<OnLoad>
+				LWIW_ProfileFrame_OnLoad(self)
+				
+			</OnLoad>
+			<OnShow>
+				
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>
